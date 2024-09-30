@@ -41,10 +41,15 @@ struct ContentView: View {
                     VStack {
                         Text("Flash Speed: \(String(format: "%.2f", flashSpeed))s")
                             .padding(.top, 20)
-                            .foregroundColor(.white)  // Keep text white on black background
+                            .foregroundColor(.white)
                         
                         Slider(value: $flashSpeed, in: 0.1...2.0, step: 0.1)
                             .padding()
+                            .onChange(of: flashSpeed) {
+                                if isFlashing {
+                                    startFlashing()
+                                }
+                            }
                     }
 
                     Toggle(isOn: $shouldFlashScreen) {
