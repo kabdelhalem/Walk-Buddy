@@ -30,36 +30,47 @@ struct ContentView: View {
                 VStack {
                     Button(action: toggleFlash) {
                         Text(isFlashing ? "Stop Flashing" : "Start Flashing")
-                            .font(.largeTitle)
+                            .font(.headline)
                             .foregroundColor(.white)
                             .padding()
                             .background(isFlashing ? Color.red : Color.green)
-                            .cornerRadius(10)
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .scaleEffect(isFlashing ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 0.3), value: isFlashing)
                     }
                     .padding()
 
-                    VStack {
+                    VStack(spacing: 10) {
                         Text("Flash Speed: \(String(format: "%.2f", flashSpeed))s")
-                            .padding(.top, 20)
+                            .font(.subheadline)
                             .foregroundColor(.white)
                         
                         Slider(value: $flashSpeed, in: 0.1...2.0, step: 0.1)
                             .padding()
+                            .accentColor(.yellow)
                             .onChange(of: flashSpeed) {
                                 if isFlashing {
                                     startFlashing()
                                 }
                             }
                     }
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(15)
+                    .shadow(radius: 5)
 
                     Toggle(isOn: $shouldFlashScreen) {
                         Text("Enable Screen Flashing")
-                            .font(.headline)
+                            .font(.subheadline)
                             .foregroundColor(.white)
                             .padding()
                     }
-                    .padding(.all, 20)
                     .toggleStyle(SwitchToggleStyle(tint: Color.green))
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .cornerRadius(15)
+                    .shadow(radius: 5)
                 }
                 .background(Color.black)
                 .cornerRadius(15)
@@ -90,6 +101,8 @@ struct ContentView: View {
             timer?.invalidate()
             timer = nil
             toggleTorch(on: false)
+            backgroundColor = .black
+
         }
 
         func toggleFlashlight() {
