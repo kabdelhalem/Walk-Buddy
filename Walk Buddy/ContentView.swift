@@ -16,29 +16,39 @@ struct ContentView: View {
     @State private var flashSpeed: Double = 0.5
     @State private var backgroundColor: Color = .black
     @State private var shouldFlashScreen = true
+    @State private var isLoading = true
 
     // Use @AppStorage to persist the emergency contact
     @AppStorage("emergencyContact") var emergencyContact: String = "1234567890"
     
     var body: some View {
-        TabView {
-            // Panic Mode Screen
-            panicModeScreen
-                .tabItem {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                    Text("Walk Buddy")
+        ZStack {
+            if isLoading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+            } else {
+                TabView {
+                    panicModeScreen
+                        .tabItem {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                            Text("Walk Buddy")
+                        }
+                    
+                    SettingsView()
+                        .tabItem {
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
                 }
-            
-            // Settings Screen
-            SettingsView()
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
-                }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                isLoading = false
+            }
         }
     }
     
-    // The Panic Mode Screen
     var panicModeScreen: some View {
         ZStack {
             if shouldFlashScreen {
@@ -96,7 +106,6 @@ struct ContentView: View {
                     .cornerRadius(15)
                     .shadow(radius: 5)
 
-                    // Panic Mode Button
                     Button(action: togglePanicMode) {
                         Text(isPanicMode ? "Deactivate Panic Mode" : "Activate Panic Mode")
                             .font(.headline)
@@ -116,7 +125,6 @@ struct ContentView: View {
         }
     }
 
-    // Toggle flash and panic mode
     func toggleFlash() {
         isFlashing.toggle()
         
@@ -149,22 +157,21 @@ struct ContentView: View {
     }
 
     func toggleTorch(on: Bool) {
-        // Get the default device that supports video capture (usually the back camera)
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else {
             print("Torch is not available on this device")
             return
         }
         
         do {
-            try device.lockForConfiguration() // Lock the device configuration for changes
+            try device.lockForConfiguration()
             if on {
-                try device.setTorchModeOn(level: 1.0) // Turn on the torch with full brightness
+                try device.setTorchModeOn(level: 1.0)
             } else {
-                device.torchMode = .off // Turn off the torch
+                device.torchMode = .off
             }
-            device.unlockForConfiguration() // Unlock configuration
+            device.unlockForConfiguration()
         } catch {
-            print("Torch could not be used: \(error.localizedDescription)") // Handle errors
+            print("Torch could not be used: \(error.localizedDescription)")
         }
     }
 
@@ -172,17 +179,14 @@ struct ContentView: View {
         backgroundColor = on ? .white : .black
     }
     
-    // Panic Mode Functions
     func togglePanicMode() {
         isPanicMode.toggle()
 
         if isPanicMode {
-            // Enable strobe light, play sound, and send message
             print("Panic mode activated")
             startFlashing()
             playAlarmSound()
 
-            // Send basic emergency message
             sendMessage()
         } else {
             print("Panic mode deactivated")
@@ -192,26 +196,21 @@ struct ContentView: View {
     }
 
     func playAlarmSound() {
-        let systemSoundID: SystemSoundID = 1005 // Change to any loud alarm sound ID
+        let systemSoundID: SystemSoundID = 1005
         AudioServicesPlaySystemSound(systemSoundID)
     }
 
     func stopAlarmSound() {
-        // Implement stop alarm sound logic
     }
 
     func sendMessage() {
-        // Use the customized emergency contact
         let message = "Emergency! I need help."
 
-        // Prepare the URL with proper URL encoding
         let urlString = "sms:\(emergencyContact)?body=\(message)"
         
-        print("Generated URL: \(urlString)")  // Log the generated URL
+        print("Generated URL: \(urlString)")
         
-        // URL encoding to handle spaces and special characters
         if let url = URL(string: urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) {
-            // Ensure the device can open the iMessage URL scheme
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url, options: [:], completionHandler: { success in
                     if success {
@@ -235,7 +234,6 @@ extension UIApplication {
     }
 }
 
-// Settings View for customizing emergency contact
 struct SettingsView: View {
     @AppStorage("emergencyContact") var emergencyContact: String = "1234567890"
     @State private var newContact: String = ""
@@ -243,12 +241,12 @@ struct SettingsView: View {
     var body: some View {
         ZStack {
             Color.black
-                .ignoresSafeArea() // Ensures the background covers the entire screen
+                .ignoresSafeArea()
 
             VStack {
                 Text("Emergency Contact Settings")
                     .font(.largeTitle)
-                    .foregroundColor(.white) // Set text color to white for visibility
+                    .foregroundColor(.white)
                     .padding()
 
                 TextField("Enter Emergency Contact", text: $newContact)
@@ -257,11 +255,9 @@ struct SettingsView: View {
                     .padding()
 
                 Button(action: {
-                    // Update emergency contact
                     if !newContact.isEmpty {
                         emergencyContact = newContact
                     }
-                    // Hide the keyboard
                     UIApplication.shared.hideKeyboard()
                 }) {
                     Text("Save Contact")
