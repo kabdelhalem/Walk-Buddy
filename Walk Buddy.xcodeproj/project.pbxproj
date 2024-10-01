@@ -44,6 +44,7 @@
 		A3E2F7A22CAB405B00E49023 /* Walk BuddyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Walk BuddyUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3E2F7A62CAB405B00E49023 /* Walk_BuddyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Walk_BuddyUITests.swift; sourceTree = "<group>"; };
 		A3E2F7A82CAB405B00E49023 /* Walk_BuddyUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Walk_BuddyUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A3E2F7B62CAC834500E49023 /* Walk-Buddy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Walk-Buddy-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +95,7 @@
 		A3E2F78A2CAB405A00E49023 /* Walk Buddy */ = {
 			isa = PBXGroup;
 			children = (
+				A3E2F7B62CAC834500E49023 /* Walk-Buddy-Info.plist */,
 				A3E2F78B2CAB405A00E49023 /* Walk_BuddyApp.swift */,
 				A3E2F78D2CAB405A00E49023 /* ContentView.swift */,
 				A3E2F78F2CAB405B00E49023 /* Assets.xcassets */,
@@ -425,6 +427,8 @@
 				DEVELOPMENT_TEAM = DR8R7K5WRT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Walk-Buddy-Info.plist";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access to your location to send emergency alerts with your location data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -434,7 +438,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kabdelhalem.Walk-Buddy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -454,6 +458,8 @@
 				DEVELOPMENT_TEAM = DR8R7K5WRT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Walk-Buddy-Info.plist";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need access to your location to send emergency alerts with your location data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -463,7 +469,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.kabdelhalem.Walk-Buddy";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
