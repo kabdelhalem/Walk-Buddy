@@ -16,8 +16,30 @@ struct ContentView: View {
     @State private var flashSpeed: Double = 0.5
     @State private var backgroundColor: Color = .black
     @State private var shouldFlashScreen = true
+
+    // Use @AppStorage to persist the emergency contact
+    @AppStorage("emergencyContact") var emergencyContact: String = "1234567890"
     
     var body: some View {
+        TabView {
+            // Panic Mode Screen
+            panicModeScreen
+                .tabItem {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                    Text("Walk Buddy")
+                }
+            
+            // Settings Screen
+            SettingsView()
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                }
+        }
+    }
+    
+    // The Panic Mode Screen
+    var panicModeScreen: some View {
         ZStack {
             if shouldFlashScreen {
                 backgroundColor
@@ -94,6 +116,7 @@ struct ContentView: View {
         }
     }
 
+    // Toggle flash and panic mode
     func toggleFlash() {
         isFlashing.toggle()
         
@@ -126,18 +149,22 @@ struct ContentView: View {
     }
 
     func toggleTorch(on: Bool) {
-        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        // Get the default device that supports video capture (usually the back camera)
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else {
+            print("Torch is not available on this device")
+            return
+        }
         
         do {
-            try device.lockForConfiguration()
+            try device.lockForConfiguration() // Lock the device configuration for changes
             if on {
-                try device.setTorchModeOn(level: 1.0)
+                try device.setTorchModeOn(level: 1.0) // Turn on the torch with full brightness
             } else {
-                device.torchMode = .off
+                device.torchMode = .off // Turn off the torch
             }
-            device.unlockForConfiguration()
+            device.unlockForConfiguration() // Unlock configuration
         } catch {
-            print("Torch could not be used")
+            print("Torch could not be used: \(error.localizedDescription)") // Handle errors
         }
     }
 
@@ -174,7 +201,7 @@ struct ContentView: View {
     }
 
     func sendMessage() {
-        let emergencyContact = "1234567890" // Replace with the actual contact number
+        // Use the customized emergency contact
         let message = "Emergency! I need help."
 
         // Prepare the URL with proper URL encoding
@@ -198,6 +225,54 @@ struct ContentView: View {
             }
         } else {
             print("Invalid URL")
+        }
+    }
+}
+
+extension UIApplication {
+    func hideKeyboard() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
+// Settings View for customizing emergency contact
+struct SettingsView: View {
+    @AppStorage("emergencyContact") var emergencyContact: String = "1234567890"
+    @State private var newContact: String = ""
+    
+    var body: some View {
+        ZStack {
+            Color.black
+                .ignoresSafeArea() // Ensures the background covers the entire screen
+
+            VStack {
+                Text("Emergency Contact Settings")
+                    .font(.largeTitle)
+                    .foregroundColor(.white) // Set text color to white for visibility
+                    .padding()
+
+                TextField("Enter Emergency Contact", text: $newContact)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.numberPad)
+                    .padding()
+
+                Button(action: {
+                    // Update emergency contact
+                    if !newContact.isEmpty {
+                        emergencyContact = newContact
+                    }
+                    // Hide the keyboard
+                    UIApplication.shared.hideKeyboard()
+                }) {
+                    Text("Save Contact")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                }
+            }
+            .padding()
         }
     }
 }
